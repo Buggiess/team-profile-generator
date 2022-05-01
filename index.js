@@ -2,45 +2,47 @@
 
 const inquirer = require('inquirer');
 const fs = require('fs');
-const Employee = require("./lib/employee.js");
-const Engineer = require('./lib/engineer');
-const Intern = require('./lib/intern');
-const Manager = require('./lib/manager');
+const employee = require("./lib/employee.js");
+const engineer = require('./lib/engineer');
+const intern = require('./lib/intern');
+const manager = require('./lib/manager');
 const generateSite = require('./src/generateSite.js')
 teamArray = [];
 
-const managerPrompt = () => {
+const employeeOptions = () => {
+    return inquirer
+        .prompt([
+            {
+                type: 'rawlist',
+                name: 'type',
+                message: 'What type of employee would you like to add to the team?',
+                options: ['Manager', 'Engineer', 'Intern', 'Finish'],
+            },
+        ]);
+};
+
+const employeePrompt = () => {
     return inquirer
         .prompt([
             {
                 type: 'input',
-                message: 'What is the manager\'s name?',
-                name: 'managerName',
+                message: 'What is the employee\'s name?',
+                name: 'name',
             },
             {
                 type: 'input',
-                message: 'What is the manager\'s ID number?',
-                name: 'managerId',
+                message: 'What is the employee\'s ID?',
+                name: 'id',
             },
             {
                 type: 'input',
-                message: 'What is the manager\'s email?',
-                name: 'managerEmail',
+                message: 'What is the employee\'s email?',
+                name: 'email',
             },
-            {
-                type: 'input',
-                message: 'What is the manager\'s office number?',
-                name: 'managerOffice',
-            }])
-        .then(response => {
-            const manager = new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOffice);
-            teamArray.push(Manager);
-            console.log(Manager);
-            promptMain();
-        })
+        ]);
 };
 
-const promptMain = () => {
+const promptMain = (type) => {
     return inquirer
         .prompt([
             {
@@ -65,73 +67,23 @@ const promptMain = () => {
     });
 };
 
-const engineerPrompt = () => {
-    return inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: 'What is the engineer\'s name?',
-                name: 'engineerName',
-            },
-            {
-                type: 'input',
-                message: 'What is the engineer\'s ID number?',
-                name: 'engineerId',
-            },
-            {
-                type: 'input',
-                message: 'What is the engineer\'s email?',
-                name: 'engineerEmail',
-            },
-            {
-                type: 'value',
-                message: 'What is the engineer\'s Github username?',
-                name: 'engineerGithub',
-            }])
-        .then(response => {
-            const engineer = new Engineer(response.engineerName, response.engineerId, response.engineerEmail, response.engineerGithub);
-            teamArray.push(Engineer);
-            console.log(Engineer);
-            promptMain();
-        })
-};
-
-const internPrompt = () => {
-    return inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: 'What is the intern\'s name?',
-                name: 'internName',
-            },
-            {
-                type: 'input',
-                message: 'What is the intern\'s ID number?',
-                name: 'internId',
-            },
-            {
-                type: 'input',
-                message: 'What is the intern\'s email?',
-                name: 'internEmail',
-            },
-            {
-                type: 'value',
-                message: 'What is the intern\'s school?',
-                name: 'internSchool',
-            }])
-        .then(response => {
-            const engineer = new Engineer(response.internName, response.internId, response.internEmail, response.internSchool);
-            teamArray.push(Intern);
-            console.log(Intern);
-            promptMain();
-        })
-};
-
-const genTeam = (fileName, data) => {
-    fs.writeFile('./dist/index.html', generateSite(teamArray), (err) => {
-        err ? console.error(err) : console.log('Creation was successful')
-    });
-};
-
-
-managerPrompt();
+const mainPrompt = (type) => {
+    if (type === "Manager") {
+        return employeePrompt()
+            .then((employee) => {
+                return inquirer
+                    .prompt([
+                        {
+                            type: 'input',
+                            message: 'What is this manager\'s office number?', 
+                            name: 'office',
+                        },
+                    ])
+                    .then((answer) => {
+                        employee.office = answer.office;
+                        return employee;
+                    });
+            })
+            .then
+    }
+}
