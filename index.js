@@ -2,7 +2,6 @@
 
 const inquirer = require('inquirer');
 const fs = require('fs');
-const employee = require("./lib/employee.js");
 const engineer = require('./lib/engineer');
 const intern = require('./lib/intern');
 const manager = require('./lib/manager');
@@ -16,7 +15,7 @@ const employeeOptions = () => {
                 type: 'rawlist',
                 name: 'type',
                 message: 'What type of employee would you like to add to the team?',
-                options: ['Manager', 'Engineer', 'Intern', 'Finish'],
+                choices: ['Manager', 'Engineer', 'Intern', 'Finish'],
             },
         ]);
 };
@@ -128,7 +127,7 @@ const mainPrompt = (type) => {
 };
 
 function init() {
-    employeeType().then((employee) => {
+    employeeOptions().then((employee) => {
       mainPrompt(employee.type).then(init);
     });
   }
