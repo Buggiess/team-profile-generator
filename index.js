@@ -7,7 +7,7 @@ const engineer = require('./lib/engineer');
 const intern = require('./lib/intern');
 const manager = require('./lib/manager');
 const generateSite = require('./src/generateSite.js')
-teamArray = [];
+let teamArray = [];
 
 const employeeOptions = () => {
     return inquirer
@@ -42,31 +42,6 @@ const employeePrompt = () => {
         ]);
 };
 
-const promptMain = (type) => {
-    return inquirer
-        .prompt([
-            {
-                type: 'list',
-                message: 'Are you finished creating your team?',
-                name: 'endTeam',
-                choices: ['Add Engineer', 'Add Intern', 'Finish']
-            }])
-        .then(userSelection => {
-            switch (userSelection.endTeam) {
-                case 'Add Engineer':
-                    engineerPrompt();
-                    break;
-                case 'Add Intern':
-                    internPrompt();
-                    break;
-                case 'Finish':
-                    generateTeam();
-                    break;
-                    
-        }
-    });
-};
-
 const mainPrompt = (type) => {
     if (type === "Manager") {
         return employeePrompt()
@@ -84,6 +59,78 @@ const mainPrompt = (type) => {
                         return employee;
                     });
             })
-            .then
-    }
-}
+            .then((employee) => {
+                teamArray.push(
+                    new manager(
+                        employee.name,
+                        employee.id,
+                        employee.email,
+                        employee.office
+                    )
+                );
+            });
+    } else if (type === 'Engineer') {
+        return employeePrompt()
+            .then((employee) => {
+                return inquirer
+                    .prompt([
+                        {
+                            type: 'input',
+                            message: 'What is this engineer\'s Github username?',
+                            name: 'github',
+                        },
+                    ])
+                    .then((answer) => {
+                        employee.github = answer.github;
+                        return employee;
+                    });
+            })
+            .then((employee) => {
+                teamArray.push(
+                    new engineer(
+                        employee.name,
+                        employee.id,
+                        employee.email,
+                        employee.github
+                    )
+                );
+            });
+    } else if (type === 'Intern') {
+        return employeePrompt()
+            .then((employee) => {
+                return inquirer
+                    .prompt([
+                        {
+                            type: 'input',
+                            message: 'What is this intern\'s school name?',
+                            name: 'school',
+                        },
+                    ])
+                    .then((answer) => {
+                        employee.school = answer.school;
+                        return employee;
+                    });
+            })
+            .then((employee) => {
+                teamArray.push(
+                    new intern(
+                        employee.name,
+                        employee.id,
+                        employee.email,
+                        employee.school
+                    )
+                );
+            });
+    } else if (type === 'Finish') {
+        fs.writeFileSync("./dist/index.html", generateSite(teamArray));
+        process.exit();
+      }
+};
+
+function init() {
+    employeeType().then((employee) => {
+      mainPrompt(employee.type).then(init);
+    });
+  }
+  
+  init();

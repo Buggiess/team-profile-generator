@@ -1,85 +1,75 @@
-const generateTeam = (team) => {
-    const frontPage = [];
-
-    const createManager = manager => {
-        let managerCard = `
-        <div>
-            <div>
-            ${manager.name}</div>
-            <ul>
-            <li>ID: ${manager.id}</li>
-            <li>Email: <span id="email"><a href="mailto:${manager.email}">${manager.email}</a></span></li>
-            <li>Office Number: ${manager.officeNumber}</li>
-            </ul>
-        </div>
-        `;
-        frontPage.push(managerCard);
-    };
-    const createEngineer = engineer => {
-        let engineerCard = `
-        <div>
-            <div>
-            ${engineer.name}</div>
-            <ul>
-            <li>ID: ${engineer.id}</li>
-            <li>Email: <span id="email"><a href="mailto:${engineer.email}">${engineer.email}</a></span></li>
-            <a href="https://github.com/${engineer.github}" target="_blank"><li>GitHub: ${engineer.github}</li></a>
-            </ul>
-        </div>
-        `;
-        frontPage.push(engineerCard);
-
-    };
-    const createIntern = intern => {
-        let internCard = `
-        <div>
-            <div>
-            ${intern.name}</div>
-            <ul>
-            <li>ID: ${intern.id}</li>
-            <li>Email: <span id="email"><a href="mailto:${intern.email}">${intern.email}</a></span></li>
-            <li>School: ${intern.school}</li>
-            </ul>
-        </div>
-        `;
-        frontPage.push(internCard);
-
-    };
-
-    for (let i = 0; i < team.length; i++) {
-        if (team[i].role === "Manager") {
-            createManager(team[i]);
-        };
-        if (team[i].role === "Engineer") {
-            createEngineer(team[i]);
-        };
-        if (team[i].role === "Intern") {
-            createIntern(team[i]);
-        };
-    }
-
-    return frontPage.join('');
-};
-
-module.exports = team => {
-
-    return `<!DOCTYPE html>
-    <html lang="en">
+const generateSite = (employees) => {
+    return `
+    <!DOCTYPE html>
+  <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./style.css">
-        <title>Team Profile Generator</title>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <link rel="stylesheet" href="../src/style.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+      <title>Team Generator</title>
     </head>
     <body>
-        <header>
-            <h1>The Team</h1>
-        </header>
-    
-        <main>${generateTeam(team)}</main>
-    
+      <script src="https://kit.fontawesome.com/1e0a13a89f.js" crossorigin="anonymous"></script>
+        <header><h1>My team</h1></header>
+        
+          <div >
+          ${generateCards(employees)} 
+          </div>
+         
     </body>
-    </html>
-    `;
-}
+  </html>`;
+  };
+  
+  const getRoleIcon = function (role) {
+    if (role === "Manager") {
+      return '<i class="fas fa-glasses"></i>';
+    } else if (role === "Engineer") {
+      return '<i class="fas fa-mug-hot"></i>';
+    } else if (role === "Intern") {
+      return '<i class="fas fa-user-graduate"></i>';
+    } else {
+      return "";
+    }
+  };
+  
+  const getEmployeeAttributes = function (employee) {
+    let role = employee.role;
+  
+    if (role === "Engineer") {
+      return `<li class="list-group-item">GitHub: ${employee.github}</li>`;
+    } else if (role === "Manager") {
+      return `<li class="list-group-item">Office Number: ${employee.office}</li>`;
+    } else if (role === "Intern") {
+      return `<li class="list-group-item">School: ${employee.school}</li>`;
+    } else {
+      return "";
+    }
+  };
+  
+  const generateCards = function (employees) {
+    const employeesHtml = employees.map(function (employee) {
+      var employeeDiv = `
+      <div class="card" style="width: 18rem;">
+          <div class="card-header">${getRoleIcon(employee.role)} ${
+        employee.role
+      }</div>
+          <ul class="list-group list-group-flush">
+              <li class="list-group-item">Name: ${employee.name}</li>
+              <li class="list-group-item">ID: ${employee.id}</li>
+              <li class="list-group-item">Email: <span id="email"><a href="mailto:${
+                employee.email
+              }">${employee.email}</a></span></li>
+              ${getEmployeeAttributes(employee)}
+          </ul>
+      </div>
+      `;
+      return employeeDiv;
+    });
+  
+    return [employeesHtml];
+  };
+  
+  module.exports = generateSite;
